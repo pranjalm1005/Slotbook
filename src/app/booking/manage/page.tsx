@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import {
+  parseBookingReference,
+  formatBookingReference,
+} from "@/lib/booking-reference";
 
 
 type Booking = {
@@ -33,8 +37,16 @@ export default function ManageBookingPage() {
     setBooking(null);
 
     try {
+      const enteredReference = bookingId.trim();
+
+      const internalBookingId = enteredReference
+        .toUpperCase()
+        .startsWith("SBK-")
+        ? parseBookingReference(enteredReference)
+        : enteredReference;
+
       const response = await fetch(
-        `/api/bookings/${bookingId}/manage`,
+        `/api/bookings/${internalBookingId}/manage`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -112,14 +124,14 @@ export default function ManageBookingPage() {
 }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-12">
+    <main className="min-h-screen bg-slate-100 px-6 py-12 text-slate-900">
       <div className="mx-auto max-w-xl">
         <h1 className="text-3xl font-bold text-slate-900">
           Manage your booking
         </h1>
 
-        <p className="mt-2 text-slate-600">
-          Enter your booking ID and private management token.
+        <p className="mt-2 text-sm font-medium text-slate-700">
+          Enter your booking reference and private management token.
         </p>
 
         <form
@@ -127,21 +139,21 @@ export default function ManageBookingPage() {
           className="mt-8 space-y-5 rounded-xl border bg-white p-6 shadow-sm"
         >
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Booking ID
+            <label className="mb-2 block text-sm font-semibold text-slate-900">
+              Booking reference
             </label>
 
             <input
               required
               value={bookingId}
               onChange={(e) => setBookingId(e.target.value)}
-              className="w-full rounded-lg border px-3 py-3"
-              placeholder="Enter booking ID"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm font-medium text-slate-900 placeholder:text-slate-500 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+              placeholder="e.g. SBK-XXXXXXXX"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label className="mb-2 block text-sm font-semibold text-slate-900">
               Management token
             </label>
 
@@ -150,7 +162,7 @@ export default function ManageBookingPage() {
               type="password"
               value={token}
               onChange={(e) => setToken(e.target.value)}
-              className="w-full rounded-lg border px-3 py-3"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm font-medium text-slate-900 placeholder:text-slate-500 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
               placeholder="Enter private token"
             />
           </div>
@@ -168,10 +180,19 @@ export default function ManageBookingPage() {
         </form>
 
         {booking && (
-          <div className="mt-6 rounded-xl border bg-white p-6 shadow-sm">
+          <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm">
             <h2 className="text-xl font-semibold">
               Booking details
             </h2>
+
+            <div className="mt-3 rounded-lg bg-indigo-50 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
+                Slotbook reference
+              </p>
+              <p className="mt-1 text-lg font-bold text-indigo-800">
+                {formatBookingReference(booking.id)}
+              </p>
+            </div>
 
             <p className="mt-4">
               <strong>Event:</strong> {booking.eventName}
@@ -199,7 +220,7 @@ export default function ManageBookingPage() {
                     Reschedule appointment
                     </h3>
 
-                    <p className="mt-2 text-sm text-slate-500">
+                    <p className="mt-2 text-sm font-medium text-slate-700">
                     Select a new appointment date and time.
                     </p>
 
@@ -207,7 +228,7 @@ export default function ManageBookingPage() {
                     type="datetime-local"
                     value={newSlot}
                     onChange={(e) => setNewSlot(e.target.value)}
-                    className="mt-3 w-full rounded-lg border px-3 py-3"
+                    className="mt-3 w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm font-medium text-slate-900 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
                     />
 
                     <button

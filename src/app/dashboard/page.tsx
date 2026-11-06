@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -76,14 +75,24 @@ const weekdays = [
   "Saturday",
 ];
 
+const inputClass =
+  "mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100";
 
+const labelClass = "text-sm font-semibold text-slate-800";
+
+const cardClass =
+  "rounded-2xl border border-slate-200 bg-white p-6 shadow-sm";
+
+const buttonClass =
+  "rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-md shadow-indigo-200 transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50";
 
 export default function DashboardPage() {
   const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeSection, setActiveSection] = useState<Section>("Dashboard");
-    // Create event type form states
+
+  // Create event type form states
   const [eventName, setEventName] = useState("");
   const [eventSlug, setEventSlug] = useState("");
   const [duration, setDuration] = useState("30");
@@ -96,34 +105,37 @@ export default function DashboardPage() {
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState("");
   const [createSuccess, setCreateSuccess] = useState("");
+
   // Weekly availability states
   const [availabilityRules, setAvailabilityRules] = useState<
     AvailabilityRule[]
   >([]);
-  
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState("");
   const [availabilitySuccess, setAvailabilitySuccess] = useState("");
   const [savingAvailability, setSavingAvailability] = useState(false);
-  
+
   const [weekday, setWeekday] = useState("1");
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("17:00");
+
   // Date override states
   const [overrides, setOverrides] = useState<AvailabilityOverride[]>([]);
   const [overrideDate, setOverrideDate] = useState("");
   const [overrideAvailable, setOverrideAvailable] = useState(false);
   const [overrideStartTime, setOverrideStartTime] = useState("09:00");
   const [overrideEndTime, setOverrideEndTime] = useState("17:00");
-  
+
   const [overrideLoading, setOverrideLoading] = useState(false);
   const [overrideSaving, setOverrideSaving] = useState(false);
   const [overrideError, setOverrideError] = useState("");
   const [overrideSuccess, setOverrideSuccess] = useState("");
+
   // Bookings states
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [bookingsLoading, setBookingsLoading] = useState(false);
   const [bookingsError, setBookingsError] = useState("");
+
   // Notifications states
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
@@ -159,7 +171,7 @@ export default function DashboardPage() {
       loadAvailability();
       loadOverrides();
     }
-  
+
     if (activeSection === "Bookings") {
       loadBookings();
     }
@@ -169,7 +181,7 @@ export default function DashboardPage() {
     }
   }, [activeSection]);
 
-    async function createEventType(e: React.FormEvent) {
+  async function createEventType(e: React.FormEvent) {
     e.preventDefault();
 
     setCreating(true);
@@ -202,7 +214,6 @@ export default function DashboardPage() {
       }
 
       setEvents((previous) => [result.data, ...previous]);
-
       setCreateSuccess("Event type created successfully!");
 
       setEventName("");
@@ -227,75 +238,75 @@ export default function DashboardPage() {
     setAvailabilityError("");
 
     try {
-        const response = await fetch(
+      const response = await fetch(
         `/api/availability?hostId=${HOST_ID}`
-        );
+      );
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!response.ok || !result.success) {
+      if (!response.ok || !result.success) {
         throw new Error(result.message || "Unable to load availability");
-        }
+      }
 
-        setAvailabilityRules(result.data);
+      setAvailabilityRules(result.data);
     } catch (err) {
-        setAvailabilityError(
+      setAvailabilityError(
         err instanceof Error ? err.message : "Something went wrong"
-        );
+      );
     } finally {
-        setAvailabilityLoading(false);
+      setAvailabilityLoading(false);
     }
-    }
+  }
 
   async function loadOverrides() {
     setOverrideLoading(true);
     setOverrideError("");
 
     try {
-        const response = await fetch(
+      const response = await fetch(
         `/api/availability/overrides?hostId=${HOST_ID}`
-        );
+      );
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!response.ok || !result.success) {
+      if (!response.ok || !result.success) {
         throw new Error(result.message || "Unable to load date overrides");
-        }
+      }
 
-        setOverrides(result.data);
+      setOverrides(result.data);
     } catch (err) {
-        setOverrideError(
+      setOverrideError(
         err instanceof Error ? err.message : "Something went wrong"
-        );
+      );
     } finally {
-        setOverrideLoading(false);
+      setOverrideLoading(false);
     }
-    }
+  }
 
   async function loadBookings() {
     setBookingsLoading(true);
     setBookingsError("");
 
     try {
-        const response = await fetch(
+      const response = await fetch(
         `/api/hosts/${HOST_ID}/bookings`
-        );
+      );
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!response.ok || !result.success) {
+      if (!response.ok || !result.success) {
         throw new Error(result.message || "Unable to load bookings");
-        }
+      }
 
-        setBookings(result.data);
+      setBookings(result.data);
     } catch (err) {
-        setBookingsError(
+      setBookingsError(
         err instanceof Error ? err.message : "Something went wrong"
-        );
+      );
     } finally {
-        setBookingsLoading(false);
+      setBookingsLoading(false);
     }
-    }
+  }
 
   async function loadNotifications() {
     setNotificationsLoading(true);
@@ -303,29 +314,29 @@ export default function DashboardPage() {
     setNotificationSuccess("");
 
     try {
-        const response = await fetch(
+      const response = await fetch(
         `/api/hosts/${HOST_ID}/notifications`
-        );
+      );
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!response.ok || !result.success) {
+      if (!response.ok || !result.success) {
         throw new Error(
-            result.message || "Unable to load notifications"
+          result.message || "Unable to load notifications"
         );
-        }
+      }
 
-        setNotifications(result.data);
+      setNotifications(result.data);
     } catch (err) {
-        setNotificationsError(
+      setNotificationsError(
         err instanceof Error
-            ? err.message
-            : "Something went wrong"
-        );
+          ? err.message
+          : "Something went wrong"
+      );
     } finally {
-        setNotificationsLoading(false);
+      setNotificationsLoading(false);
     }
-    }
+  }
 
   async function processNotifications() {
     setProcessingNotifications(true);
@@ -333,35 +344,34 @@ export default function DashboardPage() {
     setNotificationSuccess("");
 
     try {
-        const response = await fetch(
+      const response = await fetch(
         `/api/hosts/${HOST_ID}/notifications/process`,
         { method: "POST" }
-        );
+      );
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!response.ok || !result.success) {
+      if (!response.ok || !result.success) {
         throw new Error(
-            result.message || "Unable to process notifications"
+          result.message || "Unable to process notifications"
         );
-        }
+      }
 
-        await loadNotifications();
+      await loadNotifications();
 
-        setNotificationSuccess(
+      setNotificationSuccess(
         `${result.processedCount} notification(s) processed successfully.`
-        );
+      );
     } catch (err) {
-        setNotificationsError(
+      setNotificationsError(
         err instanceof Error
-            ? err.message
-            : "Something went wrong"
-        );
+          ? err.message
+          : "Something went wrong"
+      );
     } finally {
-        setProcessingNotifications(false);
+      setProcessingNotifications(false);
     }
-    }
-    
+  }
 
   async function addOverride(e: React.FormEvent) {
     e.preventDefault();
@@ -371,42 +381,42 @@ export default function DashboardPage() {
     setOverrideSuccess("");
 
     try {
-        const response = await fetch("/api/availability/overrides", {
+      const response = await fetch("/api/availability/overrides", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            hostId: HOST_ID,
-            date: overrideDate,
-            isAvailable: overrideAvailable,
-            startTime: overrideAvailable ? overrideStartTime : undefined,
-            endTime: overrideAvailable ? overrideEndTime : undefined,
+          hostId: HOST_ID,
+          date: overrideDate,
+          isAvailable: overrideAvailable,
+          startTime: overrideAvailable ? overrideStartTime : undefined,
+          endTime: overrideAvailable ? overrideEndTime : undefined,
         }),
-        });
+      });
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!response.ok || !result.success) {
+      if (!response.ok || !result.success) {
         throw new Error(result.message || "Unable to save date override");
-        }
+      }
 
-        setOverrides((previous) =>
+      setOverrides((previous) =>
         [...previous, result.data].sort((a, b) =>
-            a.overrideDate.localeCompare(b.overrideDate)
+          a.overrideDate.localeCompare(b.overrideDate)
         )
-        );
+      );
 
-        setOverrideSuccess("Date override saved successfully!");
-        setOverrideDate("");
+      setOverrideSuccess("Date override saved successfully!");
+      setOverrideDate("");
     } catch (err) {
-        setOverrideError(
+      setOverrideError(
         err instanceof Error ? err.message : "Something went wrong"
-        );
+      );
     } finally {
-        setOverrideSaving(false);
+      setOverrideSaving(false);
     }
-    }
+  }
 
   async function addAvailability(e: React.FormEvent) {
     e.preventDefault();
@@ -416,52 +426,61 @@ export default function DashboardPage() {
     setAvailabilitySuccess("");
 
     try {
-        const response = await fetch("/api/availability", {
+      const response = await fetch("/api/availability", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            hostId: HOST_ID,
-            weekday: Number(weekday),
-            startTime,
-            endTime,
+          hostId: HOST_ID,
+          weekday: Number(weekday),
+          startTime,
+          endTime,
         }),
-        });
+      });
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!response.ok || !result.success) {
+      if (!response.ok || !result.success) {
         throw new Error(result.message || "Unable to save availability");
-        }
+      }
 
-        setAvailabilityRules((previous) =>
+      setAvailabilityRules((previous) =>
         [...previous, result.data].sort(
-            (a, b) => a.weekday - b.weekday
+          (a, b) => a.weekday - b.weekday
         )
-        );
+      );
 
-        setAvailabilitySuccess("Availability saved successfully!");
+      setAvailabilitySuccess("Availability saved successfully!");
     } catch (err) {
-        setAvailabilityError(
+      setAvailabilityError(
         err instanceof Error ? err.message : "Something went wrong"
-        );
+      );
     } finally {
-        setSavingAvailability(false);
+      setSavingAvailability(false);
     }
-    }
+  }
+
   function renderEvents() {
     if (loading) {
-      return <p className="mt-6 text-slate-700">Loading event types...</p>;
+      return (
+        <p className="mt-6 text-sm font-medium text-slate-600">
+          Loading event types...
+        </p>
+      );
     }
 
     if (error) {
-      return <p className="mt-6 text-red-700">{error}</p>;
+      return (
+        <p className="mt-6 text-sm font-medium text-red-700">
+          {error}
+        </p>
+      );
     }
 
     if (events.length === 0) {
       return (
-        <p className="mt-6 rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-700">
+        <p className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-600">
           No event types found.
         </p>
       );
@@ -472,22 +491,29 @@ export default function DashboardPage() {
         {events.map((event) => (
           <article
             key={event.id}
-            className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+            className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg"
           >
             <div className="flex items-start justify-between gap-3">
-              <h4 className="text-lg font-semibold text-slate-900">
+              <h4 className="text-lg font-bold tracking-tight text-slate-950">
                 {event.name}
               </h4>
-              <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-800">
+
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                  event.active
+                    ? "bg-green-50 text-green-800"
+                    : "bg-slate-100 text-slate-600"
+                }`}
+              >
                 {event.active ? "Active" : "Inactive"}
               </span>
             </div>
 
-            <p className="mt-3 text-sm text-slate-700">
+            <p className="mt-3 text-sm text-slate-600">
               {event.duration} minutes · Capacity {event.capacity}
             </p>
 
-            <p className="mt-3 break-all text-sm font-medium text-blue-700">
+            <p className="mt-3 break-all rounded-lg bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700">
               /pranjal/{event.slug}
             </p>
           </article>
@@ -497,25 +523,34 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="min-h-screen bg-[#f5f7fb] text-slate-900">
       <div className="flex min-h-screen">
-        <aside className="w-64 shrink-0 border-r border-slate-200 bg-white p-6">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-950">
-            Slotbook
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Booking management
-          </p>
+        {/* Sidebar */}
+        <aside className="w-64 shrink-0 border-r border-slate-200 bg-white px-5 py-7 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600 text-xl font-black text-white shadow-lg shadow-indigo-200">
+              S
+            </div>
+
+            <div>
+              <h1 className="text-2xl font-extrabold tracking-tight text-slate-950">
+                Slotbook<span className="text-indigo-600">.</span>
+              </h1>
+              <p className="text-xs font-medium tracking-wide text-slate-500">
+                SMART BOOKING PLATFORM
+              </p>
+            </div>
+          </div>
 
           <nav className="mt-10 flex flex-col gap-2">
             {navigation.map((item) => (
               <button
                 key={item}
                 onClick={() => setActiveSection(item)}
-                className={`block w-full rounded-lg px-4 py-3 text-left text-sm font-semibold transition ${
+                className={`block w-full rounded-xl px-4 py-3.5 text-left text-sm font-semibold transition-all duration-200 ${
                   activeSection === item
-                    ? "bg-blue-50 text-blue-800"
-                    : "text-slate-700 hover:bg-slate-100 hover:text-slate-950"
+                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
+                    : "text-slate-600 hover:bg-indigo-50 hover:text-indigo-700"
                 }`}
               >
                 {item}
@@ -536,60 +571,66 @@ export default function DashboardPage() {
           </div>
         </aside>
 
-        <section className="min-w-0 flex-1 p-6 md:p-10">
+        {/* Main content */}
+        <section className="min-w-0 flex-1 px-6 py-8 md:px-10 md:py-10">
           <header className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-medium text-slate-600">
+              <p className="text-sm font-medium text-slate-500">
                 Host dashboard
               </p>
-              <h2 className="mt-1 text-3xl font-bold text-slate-950">
+
+              <h2 className="mt-1 text-3xl font-extrabold tracking-tight text-slate-950">
                 {activeSection === "Dashboard"
                   ? "Welcome, Pranjal"
                   : activeSection}
               </h2>
+
               <p className="mt-2 text-sm text-slate-600">
                 Manage your events and booking availability.
               </p>
             </div>
 
             <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-              <p className="text-xs font-medium text-slate-500">Timezone</p>
+              <p className="text-xs font-medium text-slate-500">
+                Timezone
+              </p>
               <p className="mt-1 font-semibold text-slate-900">
                 Asia/Kolkata
               </p>
             </div>
           </header>
 
+          {/* Dashboard */}
           {activeSection === "Dashboard" && (
             <>
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <p className="text-sm font-medium text-slate-600">
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                  <p className="text-sm font-semibold text-slate-500">
                     Event types
                   </p>
-                  <p className="mt-2 text-3xl font-bold text-slate-950">
+                  <p className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950">
                     {events.length}
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <p className="text-sm font-medium text-slate-600">
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                  <p className="text-sm font-semibold text-slate-500">
                     Host status
                   </p>
-                  <p className="mt-2 text-xl font-semibold text-green-700">
+                  <p className="mt-3 text-2xl font-extrabold text-green-700">
                     Active
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <p className="text-sm font-medium text-slate-600">
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                  <p className="text-sm font-semibold text-slate-500">
                     Public booking page
                   </p>
                   <a
                     href="/pranjal/30-minute-consultation"
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-2 inline-block font-semibold text-blue-700 hover:underline"
+                    className="mt-3 inline-block font-bold text-indigo-700 hover:text-indigo-900 hover:underline"
                   >
                     View booking page →
                   </a>
@@ -597,10 +638,10 @@ export default function DashboardPage() {
               </div>
 
               <section className="mt-10">
-                <h3 className="text-xl font-bold text-slate-950">
+                <h3 className="text-xl font-extrabold tracking-tight text-slate-950">
                   Your event types
                 </h3>
-                <p className="mt-1 text-sm text-slate-600">
+                <p className="mt-1 text-sm text-slate-500">
                   Events available for guests to book.
                 </p>
                 {renderEvents()}
@@ -608,680 +649,712 @@ export default function DashboardPage() {
             </>
           )}
 
+          {/* Event Types */}
           {activeSection === "Event Types" && (
             <section className="mt-10">
-              <h3 className="text-xl font-bold text-slate-950">
+              <h3 className="text-xl font-extrabold tracking-tight text-slate-950">
                 Manage event types
               </h3>
-              <p className="mt-1 text-sm text-slate-600">
-                View your existing booking events.
+              <p className="mt-1 text-sm text-slate-500">
+                Create and manage the booking events available to your guests.
               </p>
+
               <form
                 onSubmit={createEventType}
-                className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
-                >
-                <h4 className="text-lg font-bold text-slate-900">
-                    Create a new event type
+                className="mt-6 rounded-2xl border border-slate-200 bg-white p-7 shadow-sm"
+              >
+                <h4 className="text-xl font-extrabold tracking-tight text-slate-950">
+                  Create a new event type
                 </h4>
+                <p className="mt-1 text-sm text-slate-500">
+                  Configure the duration, capacity, and booking rules.
+                </p>
 
-                <div className="mt-5 grid gap-4 md:grid-cols-2">
-                    <div>
-                    <label className="text-sm font-medium text-slate-700">
-                        Event name
-                    </label>
+                <div className="mt-6 grid gap-5 md:grid-cols-2">
+                  <div>
+                    <label className={labelClass}>Event name</label>
                     <input
-                        required
-                        value={eventName}
-                        onChange={(e) => {
+                      required
+                      value={eventName}
+                      onChange={(e) => {
                         setEventName(e.target.value);
                         setEventSlug(
-                            e.target.value
+                          e.target.value
                             .toLowerCase()
                             .trim()
                             .replace(/[^a-z0-9]+/g, "-")
                             .replace(/^-|-$/g, "")
                         );
-                        }}
-                        placeholder="e.g. 60 Minute Consultation"
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                      }}
+                      placeholder="e.g. 60 Minute Consultation"
+                      className={inputClass}
                     />
-                    </div>
+                  </div>
 
-                    <div>
-                    <label className="text-sm font-medium text-slate-700">
-                        URL slug
+                  <div>
+                    <label className={labelClass}>URL slug</label>
+                    <input
+                      required
+                      value={eventSlug}
+                      onChange={(e) => setEventSlug(e.target.value)}
+                      placeholder="60-minute-consultation"
+                      className={inputClass}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Duration (minutes)</label>
+                    <input
+                      type="number"
+                      required
+                      min="15"
+                      max="120"
+                      step="15"
+                      value={duration}
+                      onChange={(e) => setDuration(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Capacity</label>
+                    <input
+                      type="number"
+                      required
+                      min="1"
+                      value={capacity}
+                      onChange={(e) => setCapacity(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>
+                      Buffer before (minutes)
                     </label>
                     <input
-                        required
-                        value={eventSlug}
-                        onChange={(e) => setEventSlug(e.target.value)}
-                        placeholder="60-minute-consultation"
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                      type="number"
+                      min="0"
+                      max="30"
+                      value={bufferBefore}
+                      onChange={(e) => setBufferBefore(e.target.value)}
+                      className={inputClass}
                     />
-                    </div>
+                  </div>
 
-                    <div>
-                    <label className="text-sm font-medium text-slate-700">
-                        Duration (minutes)
+                  <div>
+                    <label className={labelClass}>
+                      Buffer after (minutes)
                     </label>
                     <input
-                        type="number"
-                        required
-                        min="15"
-                        max="120"
-                        step="15"
-                        value={duration}
-                        onChange={(e) => setDuration(e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                      type="number"
+                      min="0"
+                      max="30"
+                      value={bufferAfter}
+                      onChange={(e) => setBufferAfter(e.target.value)}
+                      className={inputClass}
                     />
-                    </div>
+                  </div>
 
-                    <div>
-                    <label className="text-sm font-medium text-slate-700">
-                        Capacity
+                  <div>
+                    <label className={labelClass}>
+                      Minimum notice (minutes)
                     </label>
                     <input
-                        type="number"
-                        required
-                        min="1"
-                        value={capacity}
-                        onChange={(e) => setCapacity(e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                      type="number"
+                      min="0"
+                      value={minNotice}
+                      onChange={(e) => setMinNotice(e.target.value)}
+                      className={inputClass}
                     />
-                    </div>
+                  </div>
 
-                    <div>
-                    <label className="text-sm font-medium text-slate-700">
-                        Buffer before (minutes)
+                  <div>
+                    <label className={labelClass}>
+                      Booking horizon (days)
                     </label>
                     <input
-                        type="number"
-                        min="0"
-                        max="30"
-                        value={bufferBefore}
-                        onChange={(e) => setBufferBefore(e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                      type="number"
+                      min="1"
+                      value={bookingHorizon}
+                      onChange={(e) => setBookingHorizon(e.target.value)}
+                      className={inputClass}
                     />
-                    </div>
-
-                    <div>
-                    <label className="text-sm font-medium text-slate-700">
-                        Buffer after (minutes)
-                    </label>
-                    <input
-                        type="number"
-                        min="0"
-                        max="30"
-                        value={bufferAfter}
-                        onChange={(e) => setBufferAfter(e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-                    />
-                    </div>
-
-                    <div>
-                    <label className="text-sm font-medium text-slate-700">
-                        Minimum notice (minutes)
-                    </label>
-                    <input
-                        type="number"
-                        min="0"
-                        value={minNotice}
-                        onChange={(e) => setMinNotice(e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-                    />
-                    </div>
-
-                    <div>
-                    <label className="text-sm font-medium text-slate-700">
-                        Booking horizon (days)
-                    </label>
-                    <input
-                        type="number"
-                        min="1"
-                        value={bookingHorizon}
-                        onChange={(e) => setBookingHorizon(e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-                    />
-                    </div>
+                  </div>
                 </div>
 
                 {createError && (
-                    <p className="mt-4 text-sm text-red-700">{createError}</p>
+                  <p className="mt-5 rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700">
+                    {createError}
+                  </p>
                 )}
 
                 {createSuccess && (
-                    <p className="mt-4 text-sm text-green-700">{createSuccess}</p>
+                  <p className="mt-5 rounded-lg bg-green-50 p-3 text-sm font-medium text-green-700">
+                    {createSuccess}
+                  </p>
                 )}
 
                 <button
-                    type="submit"
-                    disabled={creating}
-                    className="mt-6 rounded-lg bg-blue-700 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
+                  type="submit"
+                  disabled={creating}
+                  className={`mt-6 ${buttonClass}`}
                 >
-                    {creating ? "Creating..." : "Create Event Type"}
+                  {creating ? "Creating..." : "Create Event Type"}
                 </button>
-            </form>
-              {renderEvents()}
+              </form>
+
+              <div className="mt-10">
+                <h3 className="text-xl font-extrabold tracking-tight text-slate-950">
+                  Existing event types
+                </h3>
+                {renderEvents()}
+              </div>
             </section>
           )}
 
+          {/* Availability */}
           {activeSection === "Availability" && (
-            <section className="mt-10">
-                <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h3 className="text-xl font-bold text-slate-950">
-                    Weekly availability
+            <section className="mt-10 space-y-6">
+              <div className={cardClass}>
+                <h3 className="text-xl font-extrabold text-slate-950">
+                  Weekly availability
                 </h3>
 
-                <p className="mt-2 text-sm text-slate-600">
-                    Configure the days and hours when guests can book appointments.
-                    All times are in Asia/Kolkata.
+                <p className="mt-2 text-sm text-slate-500">
+                  Configure the days and hours when guests can book appointments.
+                  All times are in Asia/Kolkata.
                 </p>
 
-                <form onSubmit={addAvailability} className="mt-6 grid gap-4 md:grid-cols-2">
-                    <div>
-                    <label className="text-sm font-medium text-slate-700">
-                        Weekday
-                    </label>
-
+                <form
+                  onSubmit={addAvailability}
+                  className="mt-6 grid gap-5 md:grid-cols-2"
+                >
+                  <div>
+                    <label className={labelClass}>Weekday</label>
                     <select
-                        value={weekday}
-                        onChange={(e) => setWeekday(e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                      value={weekday}
+                      onChange={(e) => setWeekday(e.target.value)}
+                      className={inputClass}
                     >
-                        {weekdays.map((day, index) => (
+                      {weekdays.map((day, index) => (
                         <option key={day} value={index}>
-                            {day}
+                          {day}
                         </option>
-                        ))}
+                      ))}
                     </select>
-                    </div>
+                  </div>
 
-                    <div>
-                    <label className="text-sm font-medium text-slate-700">
-                        Start time
-                    </label>
-
+                  <div>
+                    <label className={labelClass}>Start time</label>
                     <input
-                        type="time"
-                        required
-                        value={startTime}
-                        onChange={(e) => setStartTime(e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                      type="time"
+                      required
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                      className={inputClass}
                     />
-                    </div>
+                  </div>
 
-                    <div>
-                    <label className="text-sm font-medium text-slate-700">
-                        End time
-                    </label>
-
+                  <div>
+                    <label className={labelClass}>End time</label>
                     <input
-                        type="time"
-                        required
-                        value={endTime}
-                        onChange={(e) => setEndTime(e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                      type="time"
+                      required
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      className={inputClass}
                     />
-                    </div>
+                  </div>
 
-                    <div className="flex items-end">
+                  <div className="flex items-end">
                     <button
-                        type="submit"
-                        disabled={savingAvailability}
-                        className="w-full rounded-lg bg-blue-700 px-5 py-2.5 font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
+                      type="submit"
+                      disabled={savingAvailability}
+                      className={`w-full ${buttonClass}`}
                     >
-                        {savingAvailability ? "Saving..." : "Add Availability"}
+                      {savingAvailability ? "Saving..." : "Add Availability"}
                     </button>
-                    </div>
+                  </div>
                 </form>
 
                 {availabilityError && (
-                    <p className="mt-4 text-sm text-red-700">
+                  <p className="mt-4 text-sm font-medium text-red-700">
                     {availabilityError}
-                    </p>
+                  </p>
                 )}
 
                 {availabilitySuccess && (
-                    <p className="mt-4 text-sm text-green-700">
+                  <p className="mt-4 text-sm font-medium text-green-700">
                     {availabilitySuccess}
-                    </p>
+                  </p>
                 )}
-                </div>
+              </div>
 
-                <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className={cardClass}>
                 <div className="flex items-center justify-between gap-3">
-                    <h3 className="text-lg font-bold text-slate-950">
+                  <h3 className="text-lg font-extrabold text-slate-950">
                     Saved availability
-                    </h3>
+                  </h3>
 
-                    <button
+                  <button
                     type="button"
                     onClick={loadAvailability}
                     disabled={availabilityLoading}
-                    className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-                    >
+                    className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 disabled:opacity-50"
+                  >
                     {availabilityLoading ? "Loading..." : "Refresh"}
-                    </button>
+                  </button>
                 </div>
 
-                {availabilityRules.length === 0 ? (
-                    <p className="mt-4 text-sm text-slate-600">
-                    No availability rules loaded. Click Refresh to load your saved rules.
-                    </p>
-                ) : (
-                    <div className="mt-4 space-y-3">
-                    {availabilityRules.map((rule) => (
-                        <div
-                        key={rule.id}
-                        className="flex items-center justify-between rounded-lg bg-slate-50 p-4"
-                        >
-                        <p className="font-semibold text-slate-900">
-                            {weekdays[rule.weekday]}
-                        </p>
-
-                        <p className="text-sm text-slate-700">
-                            {rule.startTime} – {rule.endTime}
-                        </p>
-                        </div>
-                    ))}
-                    </div>
-                )}
-                </div>
-
-                {/* Date Overrides */}
-                <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <h3 className="text-xl font-bold text-slate-950">
-                    Date Overrides
-                  </h3>
-
-                  <p className="mt-2 text-sm text-slate-600">
-                    Set specific dates as unavailable or provide different
-                    working hours for a particular date.
+                {availabilityLoading && availabilityRules.length === 0 ? (
+                  <p className="mt-4 text-sm text-slate-500">
+                    Loading availability...
                   </p>
-
-                  <form onSubmit={addOverride} className="mt-6 grid gap-4 md:grid-cols-2">
-                    <div>
-                      <label className="text-sm font-medium text-slate-700">
-                        Override date
-                      </label>
-                      <input
-                        type="date"
-                        required
-                        value={overrideDate}
-                        onChange={(e) => setOverrideDate(e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium text-slate-700">
-                        Availability
-                      </label>
-                      <select
-                        value={overrideAvailable ? "available" : "unavailable"}
-                        onChange={(e) =>
-                          setOverrideAvailable(e.target.value === "available")
-                        }
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+                ) : availabilityRules.length === 0 ? (
+                  <p className="mt-4 text-sm text-slate-500">
+                    No availability rules loaded. Click Refresh to load your saved rules.
+                  </p>
+                ) : (
+                  <div className="mt-4 space-y-3">
+                    {availabilityRules.map((rule) => (
+                      <div
+                        key={rule.id}
+                        className="flex items-center justify-between rounded-xl bg-slate-50 p-4"
                       >
-                        <option value="unavailable">Unavailable (Holiday)</option>
-                        <option value="available">Available (Custom hours)</option>
-                      </select>
-                    </div>
+                        <p className="font-semibold text-slate-900">
+                          {weekdays[rule.weekday]}
+                        </p>
+                        <p className="text-sm font-medium text-slate-600">
+                          {rule.startTime} – {rule.endTime}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-                    {overrideAvailable && (
-                      <>
-                        <div>
-                          <label className="text-sm font-medium text-slate-700">
-                            Start time
-                          </label>
-                          <input
-                            type="time"
-                            required
-                            value={overrideStartTime}
-                            onChange={(e) => setOverrideStartTime(e.target.value)}
-                            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-                          />
-                        </div>
+              {/* Date Overrides */}
+              <div className={cardClass}>
+                <h3 className="text-xl font-extrabold text-slate-950">
+                  Date Overrides
+                </h3>
 
-                        <div>
-                          <label className="text-sm font-medium text-slate-700">
-                            End time
-                          </label>
-                          <input
-                            type="time"
-                            required
-                            value={overrideEndTime}
-                            onChange={(e) => setOverrideEndTime(e.target.value)}
-                            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-                          />
-                        </div>
-                      </>
-                    )}
-                  </form>
+                <p className="mt-2 text-sm text-slate-500">
+                  Set specific dates as unavailable or provide different
+                  working hours for a particular date.
+                </p>
+
+                <form
+                  onSubmit={addOverride}
+                  className="mt-6 grid gap-5 md:grid-cols-2"
+                >
+                  <div>
+                    <label className={labelClass}>Override date</label>
+                    <input
+                      type="date"
+                      required
+                      value={overrideDate}
+                      onChange={(e) => setOverrideDate(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Availability</label>
+                    <select
+                      value={overrideAvailable ? "available" : "unavailable"}
+                      onChange={(e) =>
+                        setOverrideAvailable(e.target.value === "available")
+                      }
+                      className={inputClass}
+                    >
+                      <option value="unavailable">Unavailable (Holiday)</option>
+                      <option value="available">Available (Custom hours)</option>
+                    </select>
+                  </div>
+
+                  {overrideAvailable && (
+                    <>
+                      <div>
+                        <label className={labelClass}>Start time</label>
+                        <input
+                          type="time"
+                          required
+                          value={overrideStartTime}
+                          onChange={(e) =>
+                            setOverrideStartTime(e.target.value)
+                          }
+                          className={inputClass}
+                        />
+                      </div>
+
+                      <div>
+                        <label className={labelClass}>End time</label>
+                        <input
+                          type="time"
+                          required
+                          value={overrideEndTime}
+                          onChange={(e) =>
+                            setOverrideEndTime(e.target.value)
+                          }
+                          className={inputClass}
+                        />
+                      </div>
+                    </>
+                  )}
 
                   {overrideError && (
-                    <p className="mt-4 text-sm text-red-700">
+                    <p className="text-sm font-medium text-red-700 md:col-span-2">
                       {overrideError}
                     </p>
                   )}
 
                   {overrideSuccess && (
-                    <p className="mt-4 text-sm text-green-700">
+                    <p className="text-sm font-medium text-green-700 md:col-span-2">
                       {overrideSuccess}
                     </p>
                   )}
 
+                  <div className="md:col-span-2">
+                    <button
+                      type="submit"
+                      disabled={overrideSaving}
+                      className={buttonClass}
+                    >
+                      {overrideSaving ? "Saving..." : "Save Date Override"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Saved date overrides */}
+              <div className={cardClass}>
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="text-lg font-extrabold text-slate-950">
+                    Saved date overrides
+                  </h3>
+
                   <button
                     type="button"
-                    onClick={(e) =>
-                      addOverride(e as unknown as React.FormEvent)
-                    }
-                    disabled={overrideSaving}
-                    className="mt-5 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
+                    onClick={loadOverrides}
+                    disabled={overrideLoading}
+                    className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 disabled:opacity-50"
                   >
-                    {overrideSaving ? "Saving..." : "Save Date Override"}
+                    {overrideLoading ? "Loading..." : "Refresh"}
                   </button>
                 </div>
 
-                {/* Saved date overrides */}
-                <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <div className="flex items-center justify-between gap-3">
-                    <h3 className="text-lg font-bold text-slate-950">
-                      Saved date overrides
-                    </h3>
+                {overrideLoading ? (
+                  <p className="mt-4 text-sm text-slate-500">
+                    Loading date overrides...
+                  </p>
+                ) : overrides.length === 0 ? (
+                  <p className="mt-4 text-sm text-slate-500">
+                    No date overrides found.
+                  </p>
+                ) : (
+                  <div className="mt-4 space-y-3">
+                    {overrides.map((override) => (
+                      <div
+                        key={override.id}
+                        className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-slate-50 p-4"
+                      >
+                        <p className="font-semibold text-slate-900">
+                          {override.overrideDate}
+                        </p>
 
-                    <button
-                      type="button"
-                      onClick={loadOverrides}
-                      disabled={overrideLoading}
-                      className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-                    >
-                      {overrideLoading ? "Loading..." : "Refresh"}
-                    </button>
+                        <p className="text-sm font-medium text-slate-600">
+                          {override.isAvailable
+                            ? `Available · ${override.startTime} – ${override.endTime}`
+                            : "Unavailable · Holiday"}
+                        </p>
+                      </div>
+                    ))}
                   </div>
-
-                  {overrideLoading ? (
-                    <p className="mt-4 text-sm text-slate-600">
-                      Loading date overrides...
-                    </p>
-                  ) : overrides.length === 0 ? (
-                    <p className="mt-4 text-sm text-slate-600">
-                      No date overrides found.
-                    </p>
-                  ) : (
-                    <div className="mt-4 space-y-3">
-                      {overrides.map((override) => (
-                        <div
-                          key={override.id}
-                          className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-slate-50 p-4"
-                        >
-                          <p className="font-semibold text-slate-900">
-                            {override.overrideDate}
-                          </p>
-
-                          <p className="text-sm text-slate-700">
-                            {override.isAvailable
-                              ? `Available · ${override.startTime} – ${override.endTime}`
-                              : "Unavailable · Holiday"}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                )}
+              </div>
             </section>
-            )}
+          )}
 
+          {/* Bookings */}
           {activeSection === "Bookings" && (
             <section className="mt-10">
-                <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h3 className="text-xl font-bold text-slate-950">
+                  <h3 className="text-xl font-extrabold text-slate-950">
                     All bookings
-                    </h3>
-                    <p className="mt-1 text-sm text-slate-600">
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-500">
                     View your guest appointments and booking status.
-                    </p>
+                  </p>
                 </div>
 
                 <button
-                    type="button"
-                    onClick={loadBookings}
-                    disabled={bookingsLoading}
-                    className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                  type="button"
+                  onClick={loadBookings}
+                  disabled={bookingsLoading}
+                  className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 disabled:opacity-50"
                 >
-                    {bookingsLoading ? "Loading..." : "Refresh"}
+                  {bookingsLoading ? "Loading..." : "Refresh"}
                 </button>
-                </div>
+              </div>
 
-                {bookingsError && (
+              {bookingsError && (
                 <p className="mt-4 text-sm text-red-700">
-                    {bookingsError}
+                  {bookingsError}
                 </p>
-                )}
+              )}
 
-                {bookingsLoading && bookings.length === 0 ? (
-                <p className="mt-6 text-slate-600">Loading bookings...</p>
-                ) : bookings.length === 0 ? (
-                <p className="mt-6 rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-600">
-                    No bookings found.
+              {bookingsLoading && bookings.length === 0 ? (
+                <p className="mt-6 text-sm text-slate-500">
+                  Loading bookings...
                 </p>
-                ) : (
+              ) : bookings.length === 0 ? (
+                <p className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500">
+                  No bookings found.
+                </p>
+              ) : (
                 <>
-                    <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                    <div className="rounded-xl border border-slate-200 bg-white p-5">
-                        <p className="text-sm text-slate-600">Total bookings</p>
-                        <p className="mt-2 text-3xl font-bold">{bookings.length}</p>
+                  <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                    <div className={cardClass}>
+                      <p className="text-sm font-semibold text-slate-500">
+                        Total bookings
+                      </p>
+                      <p className="mt-3 text-3xl font-extrabold text-slate-950">
+                        {bookings.length}
+                      </p>
                     </div>
 
-                    <div className="rounded-xl border border-slate-200 bg-white p-5">
-                        <p className="text-sm text-slate-600">Confirmed</p>
-                        <p className="mt-2 text-3xl font-bold text-green-700">
+                    <div className={cardClass}>
+                      <p className="text-sm font-semibold text-slate-500">
+                        Confirmed
+                      </p>
+                      <p className="mt-3 text-3xl font-extrabold text-green-700">
                         {bookings.filter((b) => b.status === "confirmed").length}
-                        </p>
+                      </p>
                     </div>
 
-                    <div className="rounded-xl border border-slate-200 bg-white p-5">
-                        <p className="text-sm text-slate-600">Cancelled</p>
-                        <p className="mt-2 text-3xl font-bold text-red-700">
+                    <div className={cardClass}>
+                      <p className="text-sm font-semibold text-slate-500">
+                        Cancelled
+                      </p>
+                      <p className="mt-3 text-3xl font-extrabold text-red-700">
                         {bookings.filter((b) => b.status === "cancelled").length}
-                        </p>
+                      </p>
                     </div>
-                    </div>
+                  </div>
 
-                    <div className="mt-6 space-y-4">
+                  <div className="mt-6 space-y-4">
                     {bookings.map((booking) => (
-                        <article
+                      <article
                         key={booking.id}
-                        className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
-                        >
+                        className={`${cardClass} transition-all duration-200 hover:shadow-md`}
+                      >
                         <div className="flex flex-wrap items-start justify-between gap-3">
-                            <div>
+                          <div>
                             <h4 className="font-bold text-slate-950">
-                                {booking.guestName}
+                              {booking.guestName}
                             </h4>
-                            <p className="mt-1 text-sm text-slate-600">
-                                {booking.guestEmail}
+                            <p className="mt-1 text-sm text-slate-500">
+                              {booking.guestEmail}
                             </p>
-                            </div>
+                          </div>
 
-                            <span
+                          <span
                             className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                                booking.status === "confirmed"
+                              booking.status === "confirmed"
                                 ? "bg-green-50 text-green-800"
                                 : "bg-red-50 text-red-800"
                             }`}
-                            >
+                          >
                             {booking.status.toUpperCase()}
-                            </span>
+                          </span>
                         </div>
 
-                        <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-                            <div>
-                            <p className="text-slate-500">Event</p>
-                            <p className="mt-1 font-medium text-slate-900">
-                                {booking.eventName} · {booking.duration} minutes
+                        <div className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                              Event
                             </p>
-                            </div>
+                            <p className="mt-1 font-semibold text-slate-900">
+                              {booking.eventName} · {booking.duration} minutes
+                            </p>
+                          </div>
 
-                            <div>
-                            <p className="text-slate-500">Appointment</p>
-                            <p className="mt-1 font-medium text-slate-900">
-                                {new Date(booking.slotStart).toLocaleString("en-IN", {
-                                dateStyle: "medium",
-                                timeStyle: "short",
-                                timeZone: "Asia/Kolkata",
-                                })}
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                              Appointment
+                            </p>
+                            <p className="mt-1 font-semibold text-slate-900">
+                              {new Date(booking.slotStart).toLocaleString(
+                                "en-IN",
+                                {
+                                  dateStyle: "medium",
+                                  timeStyle: "short",
+                                  timeZone: "Asia/Kolkata",
+                                }
+                              )}
                             </p>
                             <p className="text-xs text-slate-500">
-                                Asia/Kolkata
+                              Asia/Kolkata
                             </p>
-                            </div>
+                          </div>
                         </div>
 
                         {booking.cancellationReason && (
-                            <p className="mt-3 text-sm text-red-700">
+                          <p className="mt-3 text-sm text-red-700">
                             Cancellation reason: {booking.cancellationReason}
-                            </p>
+                          </p>
                         )}
 
-                        <p className="mt-4 border-t border-slate-100 pt-3 text-xs text-slate-500">
-                            Booking ID: {booking.id}
+                        <p className="mt-4 border-t border-slate-100 pt-3 text-xs text-slate-400">
+                          Booking ID: {booking.id}
                         </p>
-                        </article>
+                      </article>
                     ))}
-                    </div>
+                  </div>
                 </>
-                )}
-                
+              )}
             </section>
-            )}
-            {activeSection === "Notifications" && (
-                <section className="space-y-6">
-                    <div className="flex items-center justify-between">
-                    <div>
-                        <h2 className="text-2xl font-bold">Notifications</h2>
-                        <p className="text-sm text-gray-500">
-                        View and process booking notifications.
-                        </p>
-                    </div>
+          )}
 
-                    <div className="flex gap-2">
-                        <button
-                        onClick={loadNotifications}
-                        disabled={notificationsLoading}
-                        className="rounded-lg border px-4 py-2 text-sm"
+          {/* Notifications */}
+          {activeSection === "Notifications" && (
+            <section className="mt-10 space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-extrabold text-slate-950">
+                    Notifications
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-500">
+                    View and process booking notifications.
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={loadNotifications}
+                    disabled={notificationsLoading}
+                    className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-700 disabled:opacity-50"
+                  >
+                    Refresh
+                  </button>
+
+                  <button
+                    onClick={processNotifications}
+                    disabled={processingNotifications}
+                    className={buttonClass}
+                  >
+                    {processingNotifications
+                      ? "Processing..."
+                      : "Process Pending"}
+                  </button>
+                </div>
+              </div>
+
+              {notificationsError && (
+                <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+                  {notificationsError}
+                </p>
+              )}
+
+              {notificationSuccess && (
+                <p className="rounded-lg bg-green-50 p-3 text-sm text-green-700">
+                  {notificationSuccess}
+                </p>
+              )}
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div className={cardClass}>
+                  <p className="text-sm font-semibold text-slate-500">
+                    Total Notifications
+                  </p>
+                  <p className="mt-3 text-3xl font-extrabold text-slate-950">
+                    {notifications.length}
+                  </p>
+                </div>
+
+                <div className={cardClass}>
+                  <p className="text-sm font-semibold text-slate-500">
+                    Delivered
+                  </p>
+                  <p className="mt-3 text-3xl font-extrabold text-green-700">
+                    {notifications.filter((n) => n.deliveredAt).length}
+                  </p>
+                </div>
+
+                <div className={cardClass}>
+                  <p className="text-sm font-semibold text-slate-500">
+                    Pending
+                  </p>
+                  <p className="mt-3 text-3xl font-extrabold text-amber-600">
+                    {notifications.filter((n) => !n.deliveredAt).length}
+                  </p>
+                </div>
+              </div>
+
+              {notificationsLoading ? (
+                <p className="text-sm text-slate-500">
+                  Loading notifications...
+                </p>
+              ) : notifications.length === 0 ? (
+                <p className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500">
+                  No notifications found.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {notifications.map((notification) => (
+                    <article
+                      key={notification.id}
+                      className={`${cardClass} transition-all duration-200 hover:shadow-md`}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <h3 className="font-bold capitalize text-slate-950">
+                            {notification.type.replaceAll("_", " ")}
+                          </h3>
+                          <p className="mt-1 text-sm text-slate-500">
+                            {notification.guestName} · {notification.eventName}
+                          </p>
+                        </div>
+
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                            notification.deliveredAt
+                              ? "bg-green-50 text-green-700"
+                              : "bg-amber-50 text-amber-700"
+                          }`}
                         >
-                        Refresh
-                        </button>
+                          {notification.deliveredAt ? "Delivered" : "Pending"}
+                        </span>
+                      </div>
 
-                        <button
-                        onClick={processNotifications}
-                        disabled={processingNotifications}
-                        className="rounded-lg bg-black px-4 py-2 text-sm text-white disabled:opacity-50"
-                        >
-                        {processingNotifications
-                            ? "Processing..."
-                            : "Process Pending"}
-                        </button>
-                    </div>
-                    </div>
-
-                    {notificationsError && (
-                    <p className="text-sm text-red-600">
-                        {notificationsError}
-                    </p>
-                    )}
-
-                    {notificationSuccess && (
-                    <p className="text-sm text-green-600">
-                        {notificationSuccess}
-                    </p>
-                    )}
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <div className="rounded-xl border p-5">
-                        <p className="text-sm text-gray-500">Total Notifications</p>
-                        <p className="mt-2 text-2xl font-bold">
-                        {notifications.length}
+                      <div className="mt-5 space-y-2 border-t border-slate-100 pt-4 text-xs text-slate-500">
+                        <p>Booking ID: {notification.bookingId}</p>
+                        <p>
+                          Created:{" "}
+                          {new Date(notification.createdAt).toLocaleString(
+                            "en-IN",
+                            { timeZone: "Asia/Kolkata" }
+                          )}
                         </p>
-                    </div>
-
-                    <div className="rounded-xl border p-5">
-                        <p className="text-sm text-gray-500">Delivered</p>
-                        <p className="mt-2 text-2xl font-bold">
-                        {notifications.filter((n) => n.deliveredAt).length}
-                        </p>
-                    </div>
-
-                    <div className="rounded-xl border p-5">
-                        <p className="text-sm text-gray-500">Pending</p>
-                        <p className="mt-2 text-2xl font-bold">
-                        {notifications.filter((n) => !n.deliveredAt).length}
-                        </p>
-                    </div>
-                    </div>
-
-                    {notificationsLoading ? (
-                    <p className="text-gray-500">Loading notifications...</p>
-                    ) : notifications.length === 0 ? (
-                    <p className="rounded-xl border p-6 text-center text-gray-500">
-                        No notifications found.
-                    </p>
-                    ) : (
-                    <div className="space-y-3">
-                        {notifications.map((notification) => (
-                        <div
-                            key={notification.id}
-                            className="rounded-xl border p-5"
-                        >
-                            <div className="flex flex-wrap items-center justify-between gap-3">
-                            <div>
-                                <h3 className="font-semibold">
-                                {notification.type.replaceAll("_", " ")}
-                                </h3>
-                                <p className="mt-1 text-sm text-gray-600">
-                                {notification.guestName} · {notification.eventName}
-                                </p>
-                            </div>
-
-                            <span
-                                className={`rounded-full px-3 py-1 text-xs ${
-                                notification.deliveredAt
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-yellow-100 text-yellow-700"
-                                }`}
-                            >
-                                {notification.deliveredAt ? "Delivered" : "Pending"}
-                            </span>
-                            </div>
-
-                            <div className="mt-4 space-y-1 text-xs text-gray-500">
-                            <p>Booking ID: {notification.bookingId}</p>
-                            <p>
-                                Created:{" "}
-                                {new Date(notification.createdAt).toLocaleString(
+                        <p>
+                          Delivered:{" "}
+                          {notification.deliveredAt
+                            ? new Date(notification.deliveredAt).toLocaleString(
                                 "en-IN",
                                 { timeZone: "Asia/Kolkata" }
-                                )}
-                            </p>
-                            <p>
-                                Delivered:{" "}
-                                {notification.deliveredAt
-                                ? new Date(notification.deliveredAt).toLocaleString(
-                                    "en-IN",
-                                    { timeZone: "Asia/Kolkata" }
-                                    )
-                                : "Not delivered yet"}
-                            </p>
-                            </div>
-                        </div>
-                        ))}
-                    </div>
-                    )}
-                </section>
-                )}
+                              )
+                            : "Not delivered yet"}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
         </section>
       </div>
     </main>
